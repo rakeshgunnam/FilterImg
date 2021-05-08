@@ -40,7 +40,15 @@ namespace FilterImg
                 if (listBox1.Items.Count > 0)
                 {
                     listBox1.SetSelected(0, true);
-                    pictureBox1.Image = new Bitmap(listBox1.SelectedItem.ToString());
+                    try
+                    {
+                        pictureBox1.Image = new Bitmap(listBox1.SelectedItem.ToString());
+                    }
+                    catch(System.NullReferenceException e2)
+                    {
+                        MessageBox.Show("No Data Available");
+
+                    }
                 }
                 else
                 {
@@ -69,7 +77,37 @@ namespace FilterImg
             if (listBox1.Items.Count > 0)
             {
                 // Get the currently selected item in the ListBox.
-                pictureBox1.Image = new Bitmap(listBox1.SelectedItem.ToString());
+                try
+                {
+                    pictureBox1.Image = new Bitmap(listBox1.SelectedItem.ToString());
+                }
+                catch(System.ArgumentException e1)
+                {
+                    //MessageBox.Show(e1.ToString());
+                    MessageBox.Show("Invalid Data");
+                    if (listBox1.SelectedIndex + 1 < listBox1.Items.Count)
+                    {
+                        listBox1.SetSelected(listBox1.SelectedIndex + 1, true);
+                        listBox1.Items.RemoveAt(listBox1.SelectedIndex-1);
+                    }
+                    
+                    else if (listBox1.SelectedIndex - 1 >= 0)
+                    {
+                        listBox1.SetSelected(listBox1.SelectedIndex - 1, true);
+                        listBox1.Items.RemoveAt(listBox1.SelectedIndex + 1);
+                    }
+
+                    else
+                    {
+                        listBox1.Items.RemoveAt(listBox1.SelectedIndex);
+                    }
+
+
+                }
+                catch(System.NullReferenceException e3)
+                {
+                    MessageBox.Show("Null Reference");
+                }
             }
         }
 
@@ -98,7 +136,7 @@ namespace FilterImg
         {
             if (listBox1.Items.Count > 0)
             {
-                string destPath = FolderPath.Text + @"\SelectedItems\";
+                string destPath = FolderPath.Text + @"\Filtered\";
                 if (Directory.Exists(destPath))
                 {
                     File.Copy(listBox1.SelectedItem.ToString(), $"{ destPath}{ Path.GetFileName(listBox1.SelectedItem.ToString())}");
@@ -124,7 +162,7 @@ namespace FilterImg
                 }
                 else
                 {
-                    Directory.CreateDirectory(FolderPath.Text + @"\SelectedItems");
+                    Directory.CreateDirectory(FolderPath.Text + @"\Filtered");
                     File.Copy(listBox1.SelectedItem.ToString(), $"{ destPath}{ Path.GetFileName(listBox1.SelectedItem.ToString())}");
 
                     if (listBox1.SelectedIndex + 1 < listBox1.Items.Count)
